@@ -1,0 +1,292 @@
+---
+title: "STAT 2450 Assignment 8, Winter 2019 - due Monday, April 8, by 2 P.M."
+author: "Yansong Li"
+date: 'Banner:  B00755354'
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+
+
+1.  ISLR, chapter 5, problem 1.
+
+Use the fact that
+
+$$Var(aX+(1-a)Y)=a^2 V(X) + 2a(1-a)Cov(X,Y) + (1-a)^2 V(Y)$$
+Answer:
+  
+  
+  
+  
+  
+2. ISLR, chapter 5, problem 2.
+
+  (a)
+  Answer: Since there are n - 1 observations in the bootstrap sampling except jth observation. Hence, the probability of first obeservation is not 
+  jth observation is 1/(1-n).
+  
+  (b)
+  Answer: Since the bootstrap is smapling with replacement. Hence the probability is the same as the the first obervation, which is 1/(1-n).
+  
+  (c)
+  Answer: Since the bootstrapping sample with replacement then the probability of every bootstrap sample is independent from the others. The probability
+  of test one sample is 1(1-n), and there are n observations. In this case, it requires n times sampleing to make sure the jth observation is not in the
+  bootstrap samples. Hence, the probability is (1/(1-n))^n, which is equals to (1-1/n)^n.
+  
+  (d)
+  Answer: When n = 5, 1 - (1-1/n)^n = 1 - (1-1/5)^5 = 0.672.
+  
+  (e)
+  Answer: When n = 100, 1 - (1-1/n)^n = 1 - (1-1/100)^100 = 0.634.
+  
+  (f)
+  Answer: When n = 10000, 1 - (1-1/n)^n = 1 - (1-1/10000)^10000 = 0.632.
+  
+  (g), base your comments on the following figure.
+
+```{r}
+   n=c(1:100,100*c(1:10),500*(1:100))
+   Pn=1-(1-1/n)^n
+   plot(n,Pn,xlab="n",ylab="P_n",main="P(j'th observation IS IN bootstrap sample)",log="x",ylim=c(0,1))
+   abline(1-1/exp(1),0)
+```
+Answer: The plot reaches 0.63 quickly and stable at this value.
+
+  (h)
+```{r}
+store=rep(NA, 10000)
+for(i in 1:10000) {
+store[i]=sum(sample (1:100, rep=TRUE)==4) >0
+}
+mean(store)
+```
+Answer: Since (1+x/n)n=e^x as n ??? ???. Hence, under this calculus fact, the probability is 1- 1/e = 0.63212, which roughly equals to 0.6342.
+
+3. ISLR, chapter 5, problem 3.
+
+  (a)
+  Answer: The k-fold cross validation is by taking n observations and randomly dividing the set of observations into k not overlapping groups 
+  of approximately equal size n/k. The first group is treated as a validation set, and the remainder acts as a training set.
+  
+  (b)
+  Answer: 
+  (i)
+  Advantages: 
+  The validation estimate of the test error rate can be highly variable, depending on precisely which observations are included in the training
+  set and which observations are included in the validation set.Second, only a subset of the observations are used to fit the model.
+  Disadvantages: 
+  The validation set method is too simple and easy to implement.
+  
+  (ii)
+  Advantages: 
+  The LOOCV cross-validation method is a special case of k-fold cross-validation, where k = n. That means LOOCV needs to be suitable for statistical 
+  learning methods n times. This can be expensive. Also, the estimation of k-fold cross-validation is more accurate than LOOCV.
+  Disadvantages: 
+  The LOOCV has less bias than k-fold cross-validation. It is helpful if the main purpose is bias reduction.
+
+4. ISLR, chapter 5, problem 8. (Do all parts.)
+
+(a)  use the following code to start.
+```{r}
+set.seed(1)
+y=rnorm(100)
+x=rnorm(100)
+y=x-2*x^2+rnorm(100)
+x2=x^2
+x3=x^3
+x4=x^4
+data=data.frame(y=y,x=x,x2=x2,x3=x3,x4=x4)
+```
+The $p$ that is being asked for is the $p$ for "y=x-2*x^2+rnorm(100)".
+
+Answer: The n = 100 and p = 2.
+        In the equation form is Y = X-2X^2+e
+        
+(b)
+```{r}
+plot(x, y)
+```
+
+Answer: The data distributes as a curved relationship.
+
+(c)
+
+(i)Y=??0+??1X+??
+```{r}
+library(boot)
+set.seed(1)
+Data = data.frame(x, y)
+fit.glm.1 = glm(y ~ x)
+cv.glm(Data, fit.glm.1)$delta[1]
+```
+
+(ii)Y=??0+??1X+??2X^2+??
+```{r}
+fit.glm.2 <- glm(y ~ poly(x, 2))
+cv.glm(Data, fit.glm.2)$delta[1]
+```
+
+(iii)Y=??0+??1X+??2X^2+??3X^3+??
+```{r}
+fit.glm.3 <- glm(y ~ poly(x, 3))
+cv.glm(Data, fit.glm.3)$delta[1]
+```
+
+(iv)Y=??0+??1X+??2X^2+??3X^3+??4X^4+??
+```{r}
+fit.glm.4 <- glm(y ~ poly(x, 4))
+cv.glm(Data, fit.glm.4)$delta[1]
+```
+
+(d)
+
+(i)Y=??0+??1X+??
+```{r}
+library(boot)
+set.seed(6)
+Data = data.frame(x, y)
+fit.glm.1 = glm(y ~ x)
+cv.glm(Data, fit.glm.1)$delta[1]
+```
+
+(ii)Y=??0+??1X+??2X^2+??
+```{r}
+fit.glm.2 <- glm(y ~ poly(x, 2))
+cv.glm(Data, fit.glm.2)$delta[1]
+```
+
+(iii)Y=??0+??1X+??2X^2+??3X^3+??
+```{r}
+fit.glm.3 <- glm(y ~ poly(x, 3))
+cv.glm(Data, fit.glm.3)$delta[1]
+```
+
+(iv)Y=??0+??1X+??2X^2+??3X^3+??4X^4+??
+```{r}
+fit.glm.4 <- glm(y ~ poly(x, 4))
+cv.glm(Data, fit.glm.4)$delta[1]
+```
+The different seed gives the same results in part(c) since LOOCV evaluates n folds of a single observation.
+
+(e)
+
+The model with the second degree polynomial gives the lowest LOOCV error since the relationship between x and y is quadratic from part(b). 
+
+(f) Asks about the statistical significance of the coefficient estimates
+that result from fitting each of the models in part (c).  This is asking
+about the p-values for the estimated coefficients in the "summary" output.For example, for the simple linear regression in part (c i):
+
+```{r}
+yi=lm(y~x,data=data)
+syi=summary(yi)
+print(syi)
+coefficients(syi)[2,4]
+
+```
+This tells us that when testing $H_0:\beta_1=0$ against $H_A:\beta_1 \ne 0$,
+in the linear regression model, we don't reject $H_0$.
+
+For the quadratic model $=\beta_0 + \beta_1 X + \beta_2 X^2 + \epsilon$,
+
+
+```{r}
+yi=lm(y~x+x2,data=data)
+syi=summary(yi)
+print(syi)
+pvalues=coefficients(syi)[,4]
+
+```
+
+In this case the p-values  associated with "x" and "x2", being less than, say, .05,  mean that we will reject the hypotheses $H_0: \beta_1=0$, 
+and $H_0:\beta_2=0$.
+
+5. ISLR, chaper 8, problem 5.  
+
+By the majority vote approach we refer X as red since red occurs 6 times estimates that are >0.5 (0.55, 0.6, 0.65, 0.7, 0.75), 
+which is more than 4 times <0.5 (0.1, 0.15, 0.2, 0.2).
+
+By the average probability approach we refer X as green since the x_bar is 0.45 which is <0.5.
+
+6. ISLR, chapter 8, problem 8. DO ALL PARTS. 
+
+For part (a), use the following split into training and test sets.
+
+```{r}
+set.seed(77191)
+library(ISLR)
+library(randomForest)
+attach(Carseats)
+n=nrow(Carseats)
+indices=sample(1:n,n/2,replace=F)
+cstrain=Carseats[indices,]
+cstest=Carseats[-indices,]
+```
+
+(b)
+
+```{r}
+library(tree)
+tree.carseats <- tree(Sales ~ ., data = cstrain)
+summary(tree.carseats)
+```
+```{r}
+plot(tree.carseats)
+text(tree.carseats)
+```
+```{r}
+tree.pred <- predict(tree.carseats, Carseats[-indices,])
+MSE <- mean((tree.pred - Sales[-indices])^2)
+MSE
+```
+
+Answer: Hence the test MSE = 4.274251.
+
+(c)
+```{r}
+cv.carseats <- cv.tree(tree.carseats, FUN=prune.tree)
+plot(cv.carseats, type='b')
+```
+```{r}
+min <- cv.carseats$size[which.min(cv.carseats$dev)]
+min
+```
+answer: the tree of size 3 is selected by cross-validation
+```{r}
+prune.carseats <- prune.tree(tree.carseats, best = 3)
+plot(prune.carseats)
+text(prune.carseats)
+```
+```{r}
+prune.tree.pred <- predict(tree.carseats, Carseats[-indices,])
+MSE.prune <- mean((prune.tree.pred - Sales[-indices])^2)
+MSE.prune
+```
+Answer: there is no change of MSE after we prune the tree.
+
+(d)
+```{r}
+bag.carseats <- randomForest(Sales ~ ., data = cstrain, mtry = 10, ntree = 500, importance = T)
+yhat.bag <- predict(bag.carseats, newdata = cstest)
+mean((yhat.bag - cstest$Sales)^2)
+```
+Answer: MSE is equal to 2.789562.
+
+```{r}
+importance(bag.carseats)
+```
+Answer: Price and ShelveLoc are the two most important variables.
+
+(e)
+```{r}
+rf.carseats <- randomForest(Sales ~ ., data = cstrain, mtry = 3, ntree = 500, importance = TRUE)
+yhat.rf <- predict(rf.carseats, newdata = cstest)
+mean((yhat.rf - cstest$Sales)^2)
+```
+Answer: MSE is equal to 3.394855.
+```{r}
+importance(rf.carseats)
+```
+Answer: Price and ShelveLoc are still the two most important variables.
+        m is equal to sqrt(10), which is roughly equal to 3.

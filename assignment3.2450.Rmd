@@ -1,0 +1,119 @@
+---
+title: "STAT 2450 Assignment 3, Winter 2019 - due February 4, at beginning of class"
+author: "Yansong Li"
+date: 'Banner:  B00755354'
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+In the following exercises, use "for" loops to do your iteration.  
+(Do NOT use the built in function "sum").
+
+1. Use a "for" loop to evaluate the following sum, when x=.5. 
+
+$$y = \sum_{j=0}^{10} x^j$$
+
+```{r}
+y=0 # initialize y to 0
+x=0.5 #initialize x to 0.5
+for (i in 0:10)  {
+  y = y+x^i
+}
+print(y)
+```
+
+
+Your answer should be 1.999023.
+
+2.  Use a for loop, and the built in function "sqrt",  to do the following:
+
+    loop over the elements of x=c(16,-9,9,4,-1,0)
+    
+    if the element x[i] is positive, print x[i] and the square root of x[i]
+      or else if x[i] is negative, print("x[i] is negative")
+
+```{r}
+x=c(16,-9,9,4,-1,0)
+for(var in x) {
+   if (var>=0 ) {print(c(var,sqrt(var)))
+   } else 
+     {print("x[i] is negative")}
+}
+```
+
+Your output should be equivalent to:
+
+ 16  4
+ 
+ "x[i] is negative"
+ 
+ 9 3
+ 
+ 4 2
+ 
+ "x[i] is negative"
+ 
+ 0 0
+
+
+3.  Use a "for" loop to iterate over the elements of a vector x, and increment a counter
+nodd when the element of x is odd.  Then print the number of even and odd elements of x.
+
+Recall that an integer y is odd if  y%%2==1, and otherwise y is even.
+
+Use the R commands below to generate a vector "x" of length 100.
+
+```{r}
+set.seed(10) 
+x=sample(1:10,100,replace=T)
+```
+
+Then modify the following code.
+```{r}
+nodd=0  #initialize the counter nodd, which counts the number of odd elements of x
+for (i in 1:100) {
+  if(x[i]%%2==1){
+    nodd=nodd+1
+  } 
+}
+neven=length(x)-nodd   #calculate neven using the length of x and nodd.
+paste("number of odd elements = ",nodd)
+paste("number of even elements = ",neven)
+```
+For this vector x, the number of odd elements should be 56.
+
+
+5.  generate a random 5x5 matrix whose entries are the numbers 1,2, ... 25, but in random positions, using the following code:
+ 
+```{r}
+set.seed(27) #set the seed for the random number generator
+x=matrix(sample(1:25), byrow=T,ncol=5) #
+x
+```
+
+Then, using a pair of nested for loops, loop over the positions in the
+matrix x, and if the associated element of x is odd, replace the element
+by its negative.
+
+```{r}
+for (i in 0:5) {
+  for (j in 0:5){
+    x[i,j] = ifelse(x[i,j]%%2==1, -x[i,j], x[i,j])
+  }
+}
+print(x)
+```
+Your answer should be equivalent to:
+
+  -25   -3  -21    8   -5
+  
+   -9    2   -1   24    4
+   
+   10   12   -7   20  -15
+   
+   22   14   18  -23  -1
+   
+    6   16  -19  -13  -17
+
+

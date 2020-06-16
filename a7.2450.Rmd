@@ -1,0 +1,96 @@
+---
+title: "STAT 2450 Assignment 7, Winter 2019 - due Wednesday, March 27, at beginning of class"
+author: "Yansong Li"
+date: 'Banner:  B00755354'
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+
+
+1.  ISLR, chapter 8, problem 9.
+
+a)
+
+```{r}
+set.seed(666)
+library(ISLR)
+index=sample(1:nrow(OJ),800,replace=F)
+OJtrain=OJ[index,]
+OJtest=OJ[-index,]
+
+```
+
+b)
+   
+```{r}
+library(tree)
+OJtraintree=tree(Purchase~.,data=OJtrain)
+summary(OJtraintree)
+```
+Answer: The training error rate is 0.1625, and the tree has 9 terminal nodes.
+
+c)
+```{r}
+OJtraintree
+```
+Answer: I pick node number 20, which is a terminal mode since it has the star sign. It has the split condition that specialCH < 0.5.
+There are 67 observations in the branch with a deviance of 49.01. It is a prediction for the branch of MM.
+It predicts that there are 11.94% observations has the value of MM, and 88.06% has the value of CH.
+
+d)
+```{r}
+plot(OJtraintree)
+text(OJtraintree)
+```
+Answer: Clearly, "LoyalCH" is the most important indicator since the first three splits are all about this variable.
+
+e)
+```{r}
+pred_test = predict(OJtraintree, OJtest, type = "class")
+table(pred_test, OJtest$Purchase)
+```
+Answer: The test error rate: 1-(150+76)/270 = 0.162963
+
+f)
+```{r}
+cv_OJtree = cv.tree(OJtraintree, K=10, FUN = prune.tree)
+cv_OJtree
+```
+
+g)
+```{r}
+frame = data.frame(x=cv_OJtree$size, y=cv_OJtree$dev)
+plot(frame, type = 'b', xlab = "Tree size", ylab = "Deviance")
+```
+
+h)
+Answer: The tree size of 9.
+
+i)
+```{r}
+p_tree = prune.tree(OJtraintree, best = 5)
+p_tree
+```
+
+j)
+```{r}
+summary(p_tree)
+summary(OJtraintree)
+```
+Answer: The pruned tree training error rate is 0.1638, and the unpruned tree training error rate is 0.1625. Hence, the training error rate of pruned tree is higher.
+
+k)
+```{r}
+pred_test1 = predict(p_tree, OJtest, type = "class")
+table(pred_test1, OJtest$Purchase)
+```
+
+Answer: the test error rate of pruned tree is 1- (148 + 76)/270 = 0.17037
+The test error rate of unpruned tree is 0.162963 from part d. Hence, the pruned tree test error rate is higher.
+
+2.  ISLR, chapter 8, problem 4.   Sketch the tree (part a), and the partition of the predictor space (part b), by hand.
+
+ The answers was finished by hand on the next page.

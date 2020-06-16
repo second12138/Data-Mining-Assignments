@@ -1,0 +1,167 @@
+---
+title: "STAT 2450 Assignment 4, Winter 2019 - due February 11, at beginning of class"
+author: "Yansong Li"
+date: 'Banner:  B00755534'
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+1.  Write a function to calculate miles per gallon given kilometres travelled,
+and litres of gasonline used.  The function should have two arguments, litres
+and kilometres, and should return the mileage in mpg.
+
+```{r}
+mpg=function(km,litres){
+   mpg=(km*5/8)/(litres/4.55)
+   return(mpg)
+}
+mpg(100,8.3)
+```
+
+Test your function using input values of 100 kilometres and 8.3 litres.
+
+2.  The roots of the quadratic $a x^2 + b x + c$ are given by
+
+$$\frac{-b \pm \sqrt{b^2-4ac}}{2a}$$
+
+If $b^2-4ac <0$, the quadratic has no real roots.
+
+Write a function to calculate the real roots of a quadratic.  The function
+should have 3 arguments, *a*, *b* and *c*.
+If $b^2-4ac <0$, the function should print "quadratic has no real roots",
+and then return(NULL).
+Otherwise, the function should return a vector of length 2, those being
+the real roots (which may be the same if  $b^2-4ac =0$).
+
+```{r}
+quadratic = function(a,b,c){
+  if(b^2-4*a*c < 0){
+    print("quadratic has no real roots")
+    return(NULL)
+  }else{
+    r1 = (-b+sqrt(b^2-4*a*c))/2*a
+    r2 = (-b-sqrt(b^2-4*a*c))/2*a
+    result = c(r2,r1)
+    return(result)
+  }
+}
+quadratic(1,4,4)
+quadratic(1,4,6)
+quadratic(1,4,-6)
+```
+
+3.  Where $x_1, x_2, \ldots , x_n$ is a sample from a normal distribution
+with unknown mean $\mu$ and unknown variance $\sigma^2$, the level
+$100(1-\alpha)$% confidence interval for $\mu$ is given by
+
+$$\bar x \pm t_{1-\alpha/2, n-1} \frac{s}{\sqrt n}$$
+
+where $\bar x$ and $s$ are the sample mean and sample standard deviation
+of the data, and $t_{1-\alpha/2, n-1}$ cuts off an area $1-\alpha/2$ to
+its left under the $t$ curve with $n-1$ degrees of freedom.
+
+Write a function which has two arguments, a vector of data $x$, and
+and alpha, which should have a default value of .05.
+The function should return
+a vector of length 2, which contains the endpoints of the confidence interval.
+
+The percentiles of the t-distrubtion can be calculated as follows. Suppose
+that you want the 97.5'th percentile of the t-distribution with 23 degrees
+of freedom.  This can be calculated in R as
+
+```{r}
+CI = function(x,y){
+  alpha = 0.05
+  if(y != alpha){alpha=y}
+  x_bar = mean(x)
+  s = sd(x)
+  r1 = x_bar-qt(1-alpha/2,length(x)-1)*(s/sqrt(length(x)))
+  r2 = x_bar+qt(1-alpha/2,length(x)-1)*(s/sqrt(length(x)))
+  result = c(r1,r2)
+  return(result)
+}
+set.seed(87612345)
+data=rnorm(25,mean=4.5,sd=.75)
+CI(data,0.01)
+```
+
+Test your function by calculating the 99% confidence interval using
+the following data
+
+```{r}
+set.seed(87612345)
+data=rnorm(25,mean=4.5,sd=.75)
+```
+You can check your calculation using
+
+```{r}
+t.test(data,conf.level=.99)
+```
+
+
+4.
+The derivative of a function $f(x)$ can be approximated by the Newton's quotient
+
+$$\frac{f(x+h) - f(x)}{h}$$
+
+where $h$ is a small number.  Write a function to calculate the Newton's quotient
+for $f(x) = exp(x)$.  The function should take two scalar arguments, $x$ and $h$.
+Use a default value of $h=1.e-6$.
+Test your function at the point $x=1$ using the default value of $h$, and compare
+to the true value of the derivative $f'(1) = e^1$.
+```{r}
+quotient = function(x,h = 1.e-6){
+  result = (exp(x+h)-exp(x))/h
+  return(result)
+}
+quotient(1,1.e-6)
+```
+
+5.  A very useful feature in R is the ability to pass a function name as an argument.
+Here is an example, where 2 is added to the value of a function, for three different
+functions $exp(x)$, $log(x)$, and $sin(x)$, at selected points $x$.
+
+```{r}
+test=function(x,f,h = 1.e-6){
+  result = (f(x+h)-f(x))/h
+  return(result)
+}
+
+test(1,exp)
+test(2,log)
+test(pi/4,sin)
+```
+
+Modify your function from problem 4 so that you pass in the name of the function for which
+you want to approximate the derivative.  Use the same default value for $h$, and approximate
+the derivative of sin(x) at $x=\pi/4$, of $log(x)$ at $x=2$, and of $exp(x)$ at $x=1$.
+
+6. 
+Write a function which takes one argument $x$ of length 2, and returns the ordered
+values of $x$.  That is, if $x_2<x_1$, your function should return $c(x_2,x_1)$, otherwise it
+should return $x$.  (WRITE YOUR OWN FUNCTION. DO NOT USE THE BUILT IN FUNCTION ORDER)
+
+Use your function to process a dataset with 2 columns as follows.  Iterate over the rows of the
+data set, and if the element in the 2nd column of row *i* is less than the element in the first
+column of row *i*, switch the order of the two entries in the row by making a suitable call to
+the function you just wrote.
+
+Test using the following data.
+
+```{r}
+set.seed(1128719)
+data=matrix(rnorm(20),byrow=T,ncol=2)
+compare = function(x){
+  for(i in 1:nrow(x)){
+    if(x[i,1] > x[i,2]){
+      temp = x[i,2]
+      x[i,2] = x[i,1]
+      x[i,1] = temp
+    }
+  }
+  return(x)
+}
+compare(data)
+```
+
